@@ -1,4 +1,4 @@
-# yocto-pkg-tests
+# YoctoPkgTests
 Project contains scripts and environment for linux packages smoke testing
 
 > [!IMPORTANT]
