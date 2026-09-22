@@ -1,0 +1,1 @@
+ERROR    cyp_test_lib.ssh_client:ssh_client.py:80 Failed reading utf-8 stdout: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte

@@ -1,0 +1,9 @@
+{
+  "name": "test-nodejs-npm",
+  "version": "1.0.0",
+  "description": "Test package for nodejs-npm smoke test",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Test passed\""
+  }
+}

@@ -1,0 +1,4 @@
+probe begin {
+    printf("systemtap startup test success")
+    exit()
+}

@@ -1,0 +1,5 @@
+test-terminal|Test terminal,
+    am,
+    cols#80,
+    lines#24,
+    colors#8,

@@ -1,0 +1,69 @@
+services:
+  
+  yp-target:
+    image: yp-target
+    container_name: yp-target-container
+    build:
+      context: ./target-yocto
+      args:
+        - SSH_USER=${SSH_TARGET_USER}
+        - SSH_PASSWORD=${SSH_TARGET_PASSWORD}
+    environment:
+      - YOCTO_RELEASE_BRANCH_NAME=${YOCTO_RELEASE_BRANCH_NAME}
+      - SSH_QEMU_INTERNAL_PORT=${SSH_QEMU_INTERNAL_PORT}
+    privileged: true
+    command: ["${MODE}", "${IMAGE_NAME}"] # params used by ./entrypoint.sh
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ${HOST_POKY_PATH}:/opt/poky
+      - ${HOST_LOG_PATH}:/var/log/yocto
+      - ${HOST_IMAGE_PATH}:/var/yocto/built-images
+      - ${HOST_CONF_PATH}:/var/yocto/conf
+      - ${HOST_BBLAYERS_PATH}:/var/yocto/bblayers
+    ports:
+      - ${SSH_TARGET_PORT}:22
+      - ${SSH_QEMU_PORT}:${SSH_QEMU_INTERNAL_PORT}
+    healthcheck:
+      # Tries to connect to qemu machine via ssh
+      test: ssh -q -T -o StrictHostKeyChecking=no root@localhost -p ${SSH_QEMU_INTERNAL_PORT} exit || exit 1
+      interval: 80s # yocto takes at least 20 seconds to startup
+      timeout: 5s
+      retries: 1
+    stdin_open: true
+    tty: true
+  
+  agent:
+    image: agent
+    build:
+      context: ./agent
+    container_name: agent-container
+    environment:
+      - HOSTNAME=yp-target-container
+      - SSH_PORT=${SSH_QEMU_INTERNAL_PORT} # connects via the docker network, so internal is used
+      - REPORT_FORMAT=${REPORT_FORMAT}
+      - PACKAGES_RAW=${PACKAGES_RAW}
+      # - PACKAGES_FILE=${PACKAGES_FILE}
+    volumes:
+      - ${HOST_TESTS_PATH}:/var/agent/tests
+      - ${HOST_REPORT_PATH}:/var/agent/report
+      - ${HOST_LOG_PATH}:/var/log/agent
+      # - ./packages.txt:${PACKAGES_FILE} # uncomment if using PACKAGES_FILE
+    depends_on:
+      yp-target:
+        condition: service_healthy
+  
+  allure:
+    image: allure
+    build:
+      context: ./allure
+    container_name: allure-container
+    volumes:
+      - ${HOST_REPORT_PATH}/allure-results:/app/allure-results
+    ports:
+      - ${ALLURE_PORT}:80
+    depends_on:
+      agent:
+        condition: service_completed_successfully # starts only after the agent creates the report

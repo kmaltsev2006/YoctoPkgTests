@@ -1,0 +1,10 @@
+=== RUN   TestAdd
+--- PASS: TestAdd (0.00s)
+=== RUN   TestSub
+--- PASS: TestSub (0.00s)
+=== RUN   TestDivByZero
+--- FAIL: TestDivByZero (0.00s)
+    math_test.go:42: division by zero
+FAIL
+exit status 1
+FAIL    example.com/math    0.002s

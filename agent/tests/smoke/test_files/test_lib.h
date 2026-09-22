@@ -1,0 +1,7 @@
+#ifndef TEST_LIB_H
+#define TEST_LIB_H
+
+int add_numbers(int a, int b);
+int multiply_numbers(int a, int b);
+
+#endif

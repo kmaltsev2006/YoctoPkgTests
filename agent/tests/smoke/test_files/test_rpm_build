@@ -1,0 +1,13 @@
+Name:           test-package
+Version:        1.0
+Release:        1
+Summary:        Test spec file for rpm-build validation
+License:        MIT
+
+%description
+This is a dummy spec file.
+
+%prep
+%build
+%install
+%files

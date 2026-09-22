@@ -1,0 +1,4 @@
+probe begin {
+    printf("runtime_check_ok")
+    exit()
+}
